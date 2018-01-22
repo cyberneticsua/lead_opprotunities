@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="lead_product_form_view" model="ir.ui.view">
+            <field name="name">CRM Lead</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//notebook/page[1]" position="before">
+                    <page name="Products" string="Products">
+                        <field name="pdt_line">
+                            <tree editable="bottom">
+                                <field name="product_id"
+                                domain="['|',('categ_id','child_of',parent.third_level_category),('categ_id','child_of',parent.second_level_category)]"
+                                
+                                />
+                                
+                                <field name="name"/>
+                                <field name="product_uom_qty"/>
+                                <field name="price_unit"/>
+                                <field name="market_price"/>
+                                <field name="qty_hand"/>
+                                <field name="categ_id"/>
+                                <field name="product_code"/>
+                                <field name="stage_name"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="lead_product_form_view1" model="ir.ui.view">
+            <field name="name">CRM Lead</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+            <field name="arch" type="xml">
+                <button  name='%(crm.action_crm_lead2opportunity_partner)d' position="replace">
+                     <button string="Підвердити замовлення" name='sale_action_opportunities_new' type="object" class="oe_highlight"/>
+                </button>
+                <xpath expr="//button[@name='sale_action_opportunities_new']" position="after">
+                     <button string="Оновити" name='update_parts_stage' type="object" class="oe_highlight"/>
+                </xpath>
+                <button name='toggle_active' position="after">
+                    <button class="oe_inline oe_stat_button" 
+                            name="button_opportunities" 
+                            type="object" 
+                            icon="fa-plus-square-o" 
+                            context="{'default_partner_id': partner_id, 'search_default_draft': 1}" 
+                            options="{}" 
+                            modifiers="{'invisible':[['type','=','opportunity']]}" 
+                            attrs="{'invisible':[['type','=','opportunity']]}">
+                        <div class="o_stat_info" modifiers="{}">
+					            <field class="o_stat_value" string="Деталі" name="sales_order_count" modifiers="{'readonly':true} " widget="statinfo"/>
+				        </div>
+                    </button>
+                </button>
+            </field>
+        </record>
+                <!-- Додавання фільтрів категорій -->
+        <record id="lead_product_category_view" model="ir.ui.view">
+            <field name="name">CRM Lead</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='tag_ids']" position="after">
+                    <field name="first_level_category" widget="selection" 
+                    
+                    />
+                    <!-- context="{'compute_name': _get_my_name, }" -->
+                    <field name="show_second_level_category" 
+                    invisible="1"
+                    />
+                    <field name="second_level_category_id" 
+                    invisible="1"
+                    />
+                    <field name="second_level_category" widget="selection" 
+                    domain="[('parent_id', '=', second_level_category_id)]"
+                    attrs="{'invisible':[['show_second_level_category','=',False]]}"/>
+                    
+                    <field name="show_third_level_category" 
+                    invisible="1"
+                    />
+                    <field name="third_level_category_id" 
+                    invisible="1"
+                    />
+                    <field name="third_level_category" widget="selection" 
+                    domain="[('parent_id', '=', third_level_category_id)]"
+                    attrs="{'invisible':[['show_third_level_category','=',False]]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
+
+
+
+
+
+
+        
