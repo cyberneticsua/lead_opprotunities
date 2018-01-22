@@ -321,7 +321,7 @@ class LeadProductLine(models.Model):
     qty_hand = fields.Integer(string='Quantity On Hand')
     uom_id = fields.Many2one('product.uom', 'Unit of Measure')
     child_opportunity=fields.Integer(string='ID of child opportunity')
-    product_code = fields.Char (string="Код товару")
+    # product_code = fields.Char (string="Код товару")
     stage_name=fields.Char(string='Detail Stage')
     product_stage_id = fields.One2many('crm.lead','stage_id','Стан деталі')
     isSplitted = fields.Boolean(
