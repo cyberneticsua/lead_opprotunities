@@ -31,7 +31,6 @@
                                 <field name="market_price"/>
                                 <field name="qty_hand"/>
                                 <field name="uom_id"/>
-                                <field name="product_code"/>
                             </tree>
                         </field>
                     </page>

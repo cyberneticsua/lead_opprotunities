@@ -32,7 +32,6 @@
     'data': [
              'views/lead_product_view.xml',
              'views/opportunity_pdt_views.xml',
-             'views/product_code.xml'
              ],
     'images': ['static/description/banner.jpg'],
     'license': 'LGPL-3',
