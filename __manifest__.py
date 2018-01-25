@@ -28,7 +28,7 @@
     'author': "Cybrosys Techno Solutions",
     'website': "https://www.cybrosys.com",
     'category': 'Sales',
-    'depends': ['base', 'crm', 'product', 'sale', 'sale_crm'],
+    'depends': ['base', 'crm', 'product', 'sale', 'sale_crm','mail.activity'],
     'data': [
              'views/lead_product_view.xml',
              'views/opportunity_pdt_views.xml',
