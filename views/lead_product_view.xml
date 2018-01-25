@@ -13,7 +13,6 @@
                             <tree editable="bottom">
                                 <field name="product_id"
                                 domain="['|',('categ_id','child_of',parent.third_level_category),('categ_id','child_of',parent.second_level_category)]"
-                                
                                 />
                                 
                                 <field name="name"/>
@@ -22,7 +21,6 @@
                                 <field name="market_price"/>
                                 <field name="qty_hand"/>
                                 <field name="categ_id"/>
-                                <field name="product_code"/>
                                 <field name="stage_name"/>
                             </tree>
                         </field>
