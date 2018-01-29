@@ -183,7 +183,7 @@ class LeadProduct(models.Model):
                 # ('partner_id', 'in', partner_ids),
                 ('id', 'in', child_ids),
             ]
-            res['view_mode'] = 'tree,form'
+            res['view_mode'] = 'kanban,tree,form'
 
         return res
 
@@ -333,6 +333,9 @@ class LeadProductLine(models.Model):
         comodel_name='product.category',
         ondelete='set null',
     )
+
+    ######29.01.2018###########
+    default_code = fields.Text(string='Код товару')
     
 
     
@@ -347,3 +350,4 @@ class LeadProductLine(models.Model):
         self.qty_hand = data.qty_available
         self.isSplitted = False
         self.categ_id= data.categ_id
+        self.default_code=data.default_code
