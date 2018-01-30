@@ -21,6 +21,6 @@
 #
 ##############################################################################
 from . import lead_product
-from . import my_activity_extension
+# from . import my_activity_extension
 
 

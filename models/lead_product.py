@@ -1,30 +1,16 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
-#
-#    Cybrosys Technologies Pvt. Ltd.
-#    Copyright (C) 2017-TODAY Cybrosys Technologies(<https://www.cybrosys.com>).
-#    Author: Saritha Sahadevan(<https://www.cybrosys.com>)
-#    you can modify it under the terms of the GNU LESSER
-#    GENERAL PUBLIC LICENSE (LGPL v3), Version 3.
-#
-#    It is forbidden to publish, distribute, sublicense, or sell copies
-#    of the Software or modified copies of the Software.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU LESSER GENERAL PUBLIC LICENSE (LGPL v3) for more details.
-#
-#    You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
-#    GENERAL PUBLIC LICENSE (LGPL v3) along with this program.
-#    If not, see <https://www.gnu.org/licenses/>.
+#    Exa.cv.ua.
+#    Copyright (C) 2017-TODAY Exa.cv.ua(<http://www.exa.cv.ua>).
+#    Author: Igor Vinnychuk (<http://www.exa.cv.ua>)
+#    Author: Andrii Verstiak (<http://www.exa.cv.ua>)
 #
 ##############################################################################
 
 from odoo import models, fields, api
 from datetime import date
 
-actiivity_ids_list=[8, 9,10,11]
+activity_ids_list=[8, 9,10,11]
 sales_order_states = [
     'progress', 'manual', 'shipping_exept', 'invoice_except', 'done']
 
@@ -38,8 +24,7 @@ class ProductCategoryInLead(models.Model):
         domain="[('parent_id', '=', False)]",
         # domain=_getCategoryId,
         help='Категорія товару',
-
-    )
+        )
     
     second_level_category=fields.Many2one(
         'product.category',
@@ -75,13 +60,6 @@ class ProductCategoryInLead(models.Model):
         compute='_get_third_level_value',
     )
     
-
-    # def _get_my_name(self):
-    #     res = []
-    #     for record in self:
-    #         res.append((record.id, record.name))
-    #     return res
-
     # @api.one
     @api.onchange('first_level_category')
     def _get_second_level_value(self):
@@ -101,7 +79,6 @@ class ProductCategoryInLead(models.Model):
         else:
             self.show_third_level_category = False    
 
-
     # @api.model
     # def _get_my_name(self):
     #     result = []
@@ -110,9 +87,11 @@ class ProductCategoryInLead(models.Model):
     #         result.append((record.id, name))
     #     return result
 
-# class AddProductId (models.Model):
-#     _inherit = 'product.template'
-#     product_code = fields.Char (string="Код товару")
+    # def _get_my_name(self):
+    #     res = []
+    #     for record in self:
+    #         res.append((record.id, record.name))
+    #     return res
 
 class LeadProduct(models.Model):
     _inherit = 'crm.lead'
@@ -134,7 +113,7 @@ class LeadProduct(models.Model):
     #     comodel_name='crm.lead',
     # )
     ###########################11.01.2018#########################################
-    #########Підрахунок кількості 
+    #########Підрахунок кількості деталей для замовлення 
     def count_sales_order(self):
         # if not self.partner_id:
         #     return False
@@ -156,7 +135,6 @@ class LeadProduct(models.Model):
     @api.model
     def get_opportunity_view(self, view_title):
         partner_ids = self.partner_id.id
-        
         child_ids = []
         for data in self.pdt_line:
             if data.child_opportunity:
@@ -166,14 +144,12 @@ class LeadProduct(models.Model):
             # ('partner_id', 'in', partner_ids),
             ('id', 'in', child_ids),
         ])
-
         res = {
             'name': view_title,
             'type': 'ir.actions.act_window',
             'res_model': 'crm.lead',
             'view_type': 'form',
         }
-
         if len(opportunities) == 1:
             res['res_id'] = opportunities[0].id
             res['view_mode'] = 'form'
@@ -184,7 +160,6 @@ class LeadProduct(models.Model):
                 ('id', 'in', child_ids),
             ]
             res['view_mode'] = 'kanban,tree,form'
-
         return res
 
     @api.multi
@@ -192,8 +167,8 @@ class LeadProduct(models.Model):
         return self.get_opportunity_view("Список деталей")
    ###########################11.01.2018#########################################    
 
+    #Створення Quotation з Product Line
     def sale_action_quotations_new(self):
-        ####################################################
         for data in self.pdt_line:        
             vals = {
             'partner_id': self.partner_id.id,
@@ -207,20 +182,16 @@ class LeadProduct(models.Model):
                         'product_id': data.product_id.id,
                         'name': data.name,
                         'product_uom_qty': data.product_uom_qty,
-                        'uom_id': data.uom_id.id,
-                        
                 }
             order_line.create(pdt_value)
 
+    # Оновлення етапів в ліді
     def update_parts_stage(self):
         for data in self.pdt_line:
             new_opportunity= self.env['crm.lead'].search([('id', '=', data.child_opportunity)])
             stage_name = self.env['crm.stage'].search([('id', '=', new_opportunity.stage_id.id)])
             data.write ({'stage_name':stage_name.name})         
 
-    
-    
-    
     def sale_action_opportunities_new(self):
         ####################################################
         self.base_opportunity = True
@@ -231,17 +202,20 @@ class LeadProduct(models.Model):
                 # my_tag_ids =[]
                 # for my_tag_id in self.tag_ids
                 #     my_tag_ids.append(my_tag_id)
-                if data.product_code:
+                if data.default_code:
                     st_id = 2
                 else:
                     st_id = 1
                 vals = {
                 'partner_id': self.partner_id.id,
                 'user_id': self.env.uid,
-                'name': data.display_name,
+                'name': data.name,
                 'stage_id':st_id,
                 'type':'opportunity',
                 'priority':self.priority,
+                
+                #####################################################
+                #############Змінити час№№№№№№№
                 'date_deadline':date.today().strftime('%Y-%m-%d'),
                 # 'tag_ids':my_tag_ids,
                 }
@@ -253,20 +227,19 @@ class LeadProduct(models.Model):
                             'product_id': data.product_id.id,
                             'name': data.name,
                             'product_uom_qty': data.product_uom_qty,
+                            'default_code':data.default_code,
                             'pdt_crm':new_opportunity.id,
-                            'uom_id': data.uom_id.id,
                             'price_unit':data.price_unit,
                             'market_price':data.market_price,
                             'qty_hand':data.qty_hand,
                             'isSplitted': True,
-                            
-                    }
+                            }
                 pdt_line.create(pdt_value)
                 data1 = self.env['ir.model'].search([('model', '=', 'crm.lead')])
                 
                 #Creating activity###############
                 act_vals={
-                    'activity_type_id':actiivity_ids_list[st_id-1],
+                    'activity_type_id':activity_ids_list[st_id-1],
                     'date_deadline':date.today().strftime('%Y-%m-%d'),
                     'res_id':new_opportunity.id,
                     'res_model_id':data1.id,
@@ -276,14 +249,12 @@ class LeadProduct(models.Model):
                 #Setting stage stage#################
                 stage_name = self.env['crm.stage'].search([('id', '=', new_opportunity.stage_id.id)])
                 data.write ({'stage_name':stage_name.name,'product_stage_id':new_opportunity.stage_id,'child_opportunity':int(new_opportunity.id)})
-
-
         self.pdt_line.write({'isSplitted':True})
         
         if self.description:
             data1 = self.env['ir.model'].search([('model', '=', 'crm.lead')])
             act_vals={
-                    'activity_type_id':actiivity_ids_list[3],
+                    'activity_type_id':activity_ids_list[3],
                     'date_deadline':date.today().strftime('%Y-%m-%d'),
                     'res_id':self.id,
                     'res_model_id':data1.id,
@@ -309,19 +280,19 @@ class LeadProduct(models.Model):
 class LeadProductLine(models.Model):
     _name = 'crm.product_line'
 
-    product_id = fields.Many2one('product.product', string="Product",
+    product_id = fields.Many2one('product.product', string="Товар",
                                  change_default=True, ondelete='restrict', required=True)
 
     
-    name = fields.Text(string='Description')
+    name = fields.Text(string='Опис')
     pdt_crm = fields.Many2one('crm.lead')
     product_uom_qty = fields.Float(string='Quantity', default=1.0)
-    price_unit = fields.Float(string='Cost Price')
-    market_price = fields.Float(string='Sale Price')
-    qty_hand = fields.Integer(string='Quantity On Hand')
-    uom_id = fields.Many2one('product.uom', 'Unit of Measure')
+    price_unit = fields.Float(string='Ціна')
+    market_price = fields.Float(string='Ціна продажу')
+    qty_hand = fields.Integer(string='Наявна кількість')
+    uom_id = fields.Many2one('product.uom', 'Од.вимір.')
     child_opportunity=fields.Integer(string='ID of child opportunity')
-    stage_name=fields.Char(string='Detail Stage')
+    stage_name=fields.Char(string='Етап')
     product_stage_id = fields.One2many('crm.lead','stage_id','Стан деталі')
     isSplitted = fields.Boolean(
         string='Splitted',

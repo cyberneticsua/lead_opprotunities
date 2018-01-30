@@ -24,14 +24,13 @@
                     <page name="Products" string="Products">
                         <field name="pdt_line">
                             <tree editable="bottom">
-                                <field name="product_id" visible="false"/>
-                                <field name="name"/>
+                                <field name="product_id"/>
                                 <field name="default_code"/>
                                 <field name="product_uom_qty"/>
                                 <field name="price_unit" />
                                 <field name="market_price"/>
                                 <field name="qty_hand"/>
-                                <field name="uom_id"/>
+                                <!-- <field name="uom_id"/> -->
                             </tree>
                         </field>
                     </page>

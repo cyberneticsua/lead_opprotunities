@@ -25,8 +25,8 @@
     'version': '10.0.1.0.0',
     'summary': """Product Detail In Lead And Opportunity Form""",
     'description': """Product Detail In Lead And Opportunity Form""",
-    'author': "Cybrosys Techno Solutions",
-    'website': "https://www.cybrosys.com",
+    'author': "Exa",
+    'website': "https://www.exa.cv.ua",
     'category': 'Sales',
     'depends': ['base', 'crm', 'product', 'sale', 'sale_crm','mail'],
     'data': [
@@ -37,5 +37,5 @@
     'license': 'LGPL-3',
     'installable': True,
     'auto_install': False,
-    'application': False,
+    'application': True,
 }
