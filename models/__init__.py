@@ -21,6 +21,7 @@
 #
 ##############################################################################
 from . import lead_product
+from . import crm_stage_control
 # from . import my_activity_extension
 
 
