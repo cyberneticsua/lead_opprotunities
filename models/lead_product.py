@@ -9,6 +9,7 @@
 
 from odoo import models, fields, api
 from datetime import date
+from odoo.exceptions import Warning
 
 activity_ids_list=[8, 9,10,11]
 sales_order_states = [
@@ -281,7 +282,8 @@ class LeadProductLine(models.Model):
     _name = 'crm.product_line'
 
     product_id = fields.Many2one('product.product', string="Товар",
-                                 change_default=True, ondelete='restrict', required=True)
+                                 change_default=True, ondelete='restrict', required=True,) 
+                                #  domain= lambda self: self._get_product_domain())
 
     
     name = fields.Text(string='Опис')
@@ -293,6 +295,7 @@ class LeadProductLine(models.Model):
     uom_id = fields.Many2one('product.uom', 'Од.вимір.')
     child_opportunity=fields.Integer(string='ID of child opportunity')
     stage_name=fields.Char(string='Етап')
+   
     product_stage_id = fields.One2many('crm.lead','stage_id','Стан деталі')
     isSplitted = fields.Boolean(
         string='Splitted',
@@ -307,18 +310,29 @@ class LeadProductLine(models.Model):
 
     ######29.01.2018###########
     default_code = fields.Text(string='Код товару')
-    
+  
 
-    
-    
+    # @api.model
+    @api.onchange('product_id')
+    def _get_product_domain(self):
+        res = {}
+        res['domain']={'product_id':[('categ_id','child_of',self.pdt_crm.third_level_category.id)]}
+        # raise Warning(self.pdt_crm.third_level_category)
+        return res
+
     @api.onchange('product_id')
     def product_data(self):
         data = self.env['product.template'].search([('name', '=', self.product_id.name)])
-        self.name = data.name
-        self.price_unit = data.list_price
-        self.uom_id = data.uom_id
-        self.market_price = data.standard_price
-        self.qty_hand = data.qty_available
-        self.isSplitted = False
-        self.categ_id= data.categ_id
-        self.default_code=data.default_code
+        if (not(self.pdt_crm.second_level_category.id)):
+            raise Warning(self.pdt_crm.second_level_category.id) 
+        else:
+            self.name = data.name
+            self.price_unit = data.list_price
+            self.uom_id = data.uom_id
+            self.market_price = data.standard_price
+            self.qty_hand = data.qty_available
+            self.isSplitted = False
+            self.categ_id= data.categ_id
+            self.default_code=data.default_code
+    
+        
