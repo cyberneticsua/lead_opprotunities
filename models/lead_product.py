@@ -319,20 +319,20 @@ class LeadProductLine(models.Model):
   
 
     # @api.model
-    # @api.onchange('product_id')
-    # def _get_product_domain(self):
-    #     res = {}
-    #     my_domain=[]
-    #     if (self.pdt_crm.third_level_category.id):
-    #         my_domain.append(('categ_id','child_of',self.pdt_crm.third_level_category.id))
-    #     elif (self.pdt_crm.second_level_category.id):
-    #         my_domain.append(('categ_id','child_of',self.pdt_crm.second_level_category.id))
-    #     elif (self.pdt_crm.first_level_category.id):
-    #         my_domain.append(('categ_id','child_of',self.pdt_crm.first_level_category.id))
+    @api.onchange('product_id')
+    def _get_product_domain(self):
+        res = {}
+        my_domain=[]
+        if (self.pdt_crm.third_level_category.id):
+            my_domain.append(('public_categ_ids','child_of',self.pdt_crm.third_level_category.id))
+        elif (self.pdt_crm.second_level_category.id):
+            my_domain.append(('public_categ_ids','child_of',self.pdt_crm.second_level_category.id))
+        elif (self.pdt_crm.first_level_category.id):
+            my_domain.append(('public_categ_ids','child_of',self.pdt_crm.first_level_category.id))
         
-    #     res['domain']={'product_id':my_domain}
-    #     # raise Warning(self.pdt_crm.third_level_category)
-    #     return res
+        res['domain']={'product_id':my_domain}
+        # raise Warning(self.pdt_crm.third_level_category)
+        return res
 
     @api.onchange('product_id')
     def product_data(self):
@@ -346,7 +346,7 @@ class LeadProductLine(models.Model):
         self.market_price = data.standard_price
         self.qty_hand = data.qty_available
         self.isSplitted = False
-        self.categ_id= data.categ_id
+        # self.categ_id= data.categ_id
         self.default_code=data.default_code
     
         
