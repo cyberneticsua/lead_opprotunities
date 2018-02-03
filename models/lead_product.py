@@ -20,7 +20,7 @@ sales_order_states = [
 class ProductCategoryInLead(models.Model):
     _inherit = 'crm.lead'
     first_level_category = fields.Many2one(
-        'product.category',
+        'product.public.category',
         string='Категорія товару',
         domain="[('parent_id', '=', False)]",
         # domain=_getCategoryId,
@@ -28,7 +28,7 @@ class ProductCategoryInLead(models.Model):
         )
     
     second_level_category=fields.Many2one(
-        'product.category',
+        'product.public.category',
         string='Підкатегорія товару',
         help='Підкатегорія товару',
     )
@@ -45,7 +45,7 @@ class ProductCategoryInLead(models.Model):
     )
     
     third_level_category=fields.Many2one(
-        'product.category',
+        'product.public.category',
         string='Підкатегорія товару',
         help='Підкатегорія товару',
     )
@@ -310,7 +310,7 @@ class LeadProductLine(models.Model):
     
     categ_id = fields.Many2one(
         string='Категорія товару',
-        comodel_name='product.category',
+        comodel_name='product.public.category',
         ondelete='set null',
     )
 
@@ -319,20 +319,20 @@ class LeadProductLine(models.Model):
   
 
     # @api.model
-    @api.onchange('product_id')
-    def _get_product_domain(self):
-        res = {}
-        my_domain=[]
-        if (self.pdt_crm.third_level_category.id):
-            my_domain.append(('categ_id','child_of',self.pdt_crm.third_level_category.id))
-        elif (self.pdt_crm.second_level_category.id):
-            my_domain.append(('categ_id','child_of',self.pdt_crm.second_level_category.id))
-        elif (self.pdt_crm.first_level_category.id):
-            my_domain.append(('categ_id','child_of',self.pdt_crm.first_level_category.id))
+    # @api.onchange('product_id')
+    # def _get_product_domain(self):
+    #     res = {}
+    #     my_domain=[]
+    #     if (self.pdt_crm.third_level_category.id):
+    #         my_domain.append(('categ_id','child_of',self.pdt_crm.third_level_category.id))
+    #     elif (self.pdt_crm.second_level_category.id):
+    #         my_domain.append(('categ_id','child_of',self.pdt_crm.second_level_category.id))
+    #     elif (self.pdt_crm.first_level_category.id):
+    #         my_domain.append(('categ_id','child_of',self.pdt_crm.first_level_category.id))
         
-        res['domain']={'product_id':my_domain}
-        # raise Warning(self.pdt_crm.third_level_category)
-        return res
+    #     res['domain']={'product_id':my_domain}
+    #     # raise Warning(self.pdt_crm.third_level_category)
+    #     return res
 
     @api.onchange('product_id')
     def product_data(self):
