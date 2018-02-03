@@ -66,19 +66,25 @@ class ProductCategoryInLead(models.Model):
     def _get_second_level_value(self):
         if self.first_level_category.name:
             self.show_second_level_category = True
+            self.second_level_category=False
+            self.third_level_category=False
             self.second_level_category_id = self.first_level_category.id
         else:
             self.show_second_level_category = False
             self.show_third_level_category=False
+            self.second_level_category=False
+            self.third_level_category=False
 
     # @api.one
     @api.onchange('second_level_category')
     def _get_third_level_value(self):
         if self.second_level_category.name:
             self.show_third_level_category = True
+            self.third_level_category=False
             self.third_level_category_id = self.second_level_category.id
         else:
-            self.show_third_level_category = False    
+            self.show_third_level_category = False
+            self.third_level_category=False    
 
     # @api.model
     # def _get_my_name(self):
@@ -316,23 +322,31 @@ class LeadProductLine(models.Model):
     @api.onchange('product_id')
     def _get_product_domain(self):
         res = {}
-        res['domain']={'product_id':[('categ_id','child_of',self.pdt_crm.third_level_category.id)]}
+        my_domain=[]
+        if (self.pdt_crm.third_level_category.id):
+            my_domain.append(('categ_id','child_of',self.pdt_crm.third_level_category.id))
+        elif (self.pdt_crm.second_level_category.id):
+            my_domain.append(('categ_id','child_of',self.pdt_crm.second_level_category.id))
+        elif (self.pdt_crm.first_level_category.id):
+            my_domain.append(('categ_id','child_of',self.pdt_crm.first_level_category.id))
+        
+        res['domain']={'product_id':my_domain}
         # raise Warning(self.pdt_crm.third_level_category)
         return res
 
     @api.onchange('product_id')
     def product_data(self):
         data = self.env['product.template'].search([('name', '=', self.product_id.name)])
-        if (not(self.pdt_crm.second_level_category.id)):
-            raise Warning(self.pdt_crm.second_level_category.id) 
-        else:
-            self.name = data.name
-            self.price_unit = data.list_price
-            self.uom_id = data.uom_id
-            self.market_price = data.standard_price
-            self.qty_hand = data.qty_available
-            self.isSplitted = False
-            self.categ_id= data.categ_id
-            self.default_code=data.default_code
+        # if (not(self.pdt_crm.second_level_category.id)):
+        #     raise Warning(self.pdt_crm.second_level_category.id) 
+        # else:
+        self.name = data.name
+        self.price_unit = data.list_price
+        self.uom_id = data.uom_id
+        self.market_price = data.standard_price
+        self.qty_hand = data.qty_available
+        self.isSplitted = False
+        self.categ_id= data.categ_id
+        self.default_code=data.default_code
     
         
