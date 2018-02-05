@@ -64,7 +64,7 @@ class ProductCategoryInLead(models.Model):
     # @api.one
     @api.onchange('first_level_category')
     def _get_second_level_value(self):
-        if self.first_level_category.name:
+        if (self.first_level_category.name) and (self.env['product.public.category'].search_count([('parent_id','=',self.first_level_category.id)])):
             self.show_second_level_category = True
             self.second_level_category=False
             self.third_level_category=False
@@ -78,7 +78,7 @@ class ProductCategoryInLead(models.Model):
     # @api.one
     @api.onchange('second_level_category')
     def _get_third_level_value(self):
-        if self.second_level_category.name:
+        if (self.second_level_category.name)  and (self.env['product.public.category'].search_count([('parent_id','=',self.second_level_category.id)])):
             self.show_third_level_category = True
             self.third_level_category=False
             self.third_level_category_id = self.second_level_category.id
@@ -109,16 +109,6 @@ class LeadProduct(models.Model):
         default=False,
     )
         
-    # parent_opportunity = fields.One2many(
-    #     string='Parent Opportunities',
-    #     comodel_name='crm.lead',
-    #     inverse_name='inverse_field',
-    # )
-    
-    # child_opportunities = fields.Many2one(
-    #     string='Child opprotunities',
-    #     comodel_name='crm.lead',
-    # )
     ###########################11.01.2018#########################################
     #########Підрахунок кількості деталей для замовлення 
     def count_sales_order(self):
@@ -138,7 +128,6 @@ class LeadProduct(models.Model):
         
     #############Перехід до списку opportunities
     # @api.multi
-    # def get_opportunity_view(self, order_states, view_title):
     @api.model
     def get_opportunity_view(self, view_title):
         partner_ids = self.partner_id.id
@@ -346,7 +335,7 @@ class LeadProductLine(models.Model):
         self.market_price = data.standard_price
         self.qty_hand = data.qty_available
         self.isSplitted = False
-        # self.categ_id= data.categ_id
+        # self.categ_id= data.public_categ_ids
         self.default_code=data.default_code
     
         
