@@ -216,7 +216,8 @@ class LeadProduct(models.Model):
                 # 'tag_ids':my_tag_ids,
                 }
                 new_opportunity = self.env['crm.lead'].create(vals)
-                
+                # raise Warning(self.tag_ids.ids)
+                new_opportunity.tag_ids=[(6,0,self.tag_ids.ids)]
                 # Creating product line in opportunity##########
                 pdt_line = self.env['crm.product_line']
                 pdt_value = {
