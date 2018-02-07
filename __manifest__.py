@@ -28,7 +28,7 @@
     'author': "Exa",
     'website': "https://www.exa.cv.ua",
     'category': 'Sales',
-    'depends': ['base', 'crm', 'product', 'sale', 'sale_crm','mail','vehicle_brand'],
+    'depends': ['base', 'crm', 'product', 'sale', 'sale_crm','mail','vehicle_brand', 'product_brand'],
     'data': [
              'views/lead_product_view.xml',
              'views/opportunity_pdt_views.xml',

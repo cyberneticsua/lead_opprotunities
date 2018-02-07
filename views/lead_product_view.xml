@@ -43,14 +43,14 @@
                     <page name="Products" string="Products">
                         <field name="pdt_line">
                             <tree editable="bottom">
-                                <!-- <field name="product_id"
-                                domain="['|',('categ_id','child_of',parent.third_level_category),('categ_id','child_of',parent.second_level_category)]"
-                                /> -->
                                 <field name="product_id" />
+                                
+                                <!-- options="{'no_create':true,'no_quick_create':true,'no_create_edit':true,'no_open':true}"                                -->
                                 <field name="name"  
                                 invisible="1"
                                 />
                                 <field name="default_code"/>
+                                <field name="product_brand"/>
                                 <field name="product_uom_qty"/>
                                 <field name="qty_hand"/>
                                 <field name="stage_name"/>

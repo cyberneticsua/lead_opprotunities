@@ -30,7 +30,6 @@
                                 <field name="price_unit" />
                                 <field name="market_price"/>
                                 <field name="qty_hand"/>
-                                <!-- <field name="uom_id"/> -->
                             </tree>
                         </field>
                     </page>

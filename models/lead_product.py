@@ -23,7 +23,6 @@ class ProductCategoryInLead(models.Model):
         'product.public.category',
         string='Категорія товару',
         domain="[('parent_id', '=', False)]",
-        # domain=_getCategoryId,
         help='Категорія товару',
         )
     
@@ -194,10 +193,8 @@ class LeadProduct(models.Model):
         countt=1
         for data in self.pdt_line:        
             if (not data.isSplitted):
+                
                 # Creating opportunity###############
-                # my_tag_ids =[]
-                # for my_tag_id in self.tag_ids
-                #     my_tag_ids.append(my_tag_id)
                 if data.default_code:
                     st_id = 2
                 else:
@@ -213,10 +210,10 @@ class LeadProduct(models.Model):
                 #####################################################
                 #############Змінити час№№№№№№№
                 'date_deadline':date.today().strftime('%Y-%m-%d'),
-                # 'tag_ids':my_tag_ids,
                 }
                 new_opportunity = self.env['crm.lead'].create(vals)
-                # raise Warning(self.tag_ids.ids)
+                new_opportunity.write({'stage_id':st_id})    
+                
                 new_opportunity.tag_ids=[(6,0,self.tag_ids.ids)]
                 # Creating product line in opportunity##########
                 pdt_line = self.env['crm.product_line']
@@ -259,9 +256,9 @@ class LeadProduct(models.Model):
             my_activity = self.env['mail.activity'].create(act_vals)    
         #########################################################
         #self.env.ref('action_your_pipeline').run()
-        
-        action = self.env['crm.team'].action_your_pipeline()
-        return action
+        return self.get_opportunity_view("Список деталей")
+        # action = self.env['crm.team'].action_your_pipeline()
+        # return action
         
         # return {
         #      'type': 'ir.actions.act_window',
@@ -280,34 +277,32 @@ class LeadProductLine(models.Model):
     product_id = fields.Many2one('product.product', string="Товар",
                                  change_default=True, ondelete='restrict', required=True,) 
                                 #  domain= lambda self: self._get_product_domain())
-
-    
     name = fields.Text(string='Опис')
-    pdt_crm = fields.Many2one('crm.lead')
+    pdt_crm = fields.Many2one('crm.lead', string='Діалог')
     product_uom_qty = fields.Float(string='Quantity', default=1.0)
     price_unit = fields.Float(string='Ціна')
     market_price = fields.Float(string='Ціна продажу')
     qty_hand = fields.Integer(string='Наявна кількість')
-    uom_id = fields.Many2one('product.uom', 'Од.вимір.')
     child_opportunity=fields.Integer(string='ID of child opportunity')
     stage_name=fields.Char(string='Етап')
-   
     product_stage_id = fields.One2many('crm.lead','stage_id','Стан деталі')
     isSplitted = fields.Boolean(
         string='Splitted',
     )
     #######16.01.2018###########
-    
     categ_id = fields.Many2one(
         string='Категорія товару',
         comodel_name='product.public.category',
         ondelete='set null',
     )
-
     ######29.01.2018###########
     default_code = fields.Text(string='Код товару')
-  
 
+    product_brand = fields.Char(
+        string='Бренд',
+        help='Бренд товару'
+    )
+    
     # @api.model
     @api.onchange('product_id')
     def _get_product_domain(self):
@@ -338,5 +333,6 @@ class LeadProductLine(models.Model):
         self.isSplitted = False
         # self.categ_id= data.public_categ_ids
         self.default_code=data.default_code
+        self.product_brand=data.product_brand_id.name
     
         
