@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="opportunity_product_form1_view" model="ir.ui.view">
+        <!-- <record id="opportunity_product_form1_view" model="ir.ui.view">
             <field name="name">CRM Lead</field>
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
@@ -13,7 +13,7 @@
                     <button string="Split Opportunity" name='sale_action_opportunities_new' type="object" class="oe_highlight"/>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 
         <record id="opportunity_product_form_view" model="ir.ui.view">
             <field name="name">CRM Lead</field>

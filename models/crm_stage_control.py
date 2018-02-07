@@ -15,6 +15,8 @@ from odoo.exceptions import Warning
 class ActivityControl (models.Model):
     _inherit='crm.lead'
     
+    
+
     @api.onchange('stage_id')
     def _onchange_stage_id(self):
         ####Помилка при перенесенні деталі без коду
@@ -36,5 +38,13 @@ class ActivityControl (models.Model):
         #код для оновлення pdt_line
         my_pdt_line = self.env['crm.product_line'].search([('child_opportunity', '=', int(self._origin.id))])
         my_pdt_line.write({'stage_name':self.stage_id.name})
+
+    @api.multi
+    def write(self, vals):
+        if (self.name=="Діалог"):
+            if (self.partner_id.id):
+                vals['name']=self.partner_id.name
+        res = super(ActivityControl, self).write(vals)
+        
         
         

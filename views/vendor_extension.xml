@@ -3,12 +3,39 @@
     <data>
         <record id="res_partner_parsing_map" model="ir.ui.view">
             <field name="name">Parsing for Vendors</field>
-            <field name="model">res.partner.form</field>
+            <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//page[@name='internal_notes']" position="before">
                     <page name="vendor_parsing" string="Карта парсингу">
-                        
+                        <group col="3">
+                            <group string="Парсинг" >
+                                <field name="price_list_parsing"/>
+                                <field name="phone_parsing"/>
+                                <field name="site_parsing"/>
+                            </group>
+                            <group string="Актуальність" colspan="2">
+                                <field name="actual_price"/>
+                                <field name="actual_qty"/>
+                            </group>
+                         
+                            <group string="Бренд">
+                                <field name="brand_ids" 
+                                widget="many2many_checkboxes"
+                                 />
+                            </group>
+                             <group string="Марки авто">
+                                <field name="vehicle_brand_ids" 
+                                widget="many2many_checkboxes"
+                                 />
+                            </group>
+                             <group string="Група деталей">
+                                <field name="public_categ_ids" 
+                                widget="many2many_checkboxes"
+                                 />
+                            </group>
+                            
+                        </group>
                     </page>
                 </xpath>
             </field>
