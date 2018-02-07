@@ -30,8 +30,6 @@ class ActivityControl (models.Model):
         # raise Warning (qty_sales)        
         if (not qty_sales):
             raise Warning(('Ви намагаєтесь перенести деталь без коду')) 
-
-
         values = self._onchange_stage_id_values(self.stage_id.id)
         self.update(values)
         
@@ -41,6 +39,13 @@ class ActivityControl (models.Model):
 
     @api.multi
     def write(self, vals):
+        if ((self.stage_id.id==1)and (self.type == 'opportunity')):
+            qty_sales = 0
+            for data in self.pdt_line:
+                if (data.default_code):
+                    qty_sales += 1
+            vals['stage_id'] = 2
+
         if (self.name=="Діалог"):
             if (self.partner_id.id):
                 vals['name']=self.partner_id.name
