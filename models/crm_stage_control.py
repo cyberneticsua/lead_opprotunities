@@ -44,7 +44,8 @@ class ActivityControl (models.Model):
             for data in self.pdt_line:
                 if (data.default_code):
                     qty_sales += 1
-            vals['stage_id'] = 2
+            if (qty_sales>0):
+                vals['stage_id'] = 2
 
         if (self.name=="Діалог"):
             if (self.partner_id.id):

@@ -187,10 +187,12 @@ class LeadProduct(models.Model):
             stage_name = self.env['crm.stage'].search([('id', '=', new_opportunity.stage_id.id)])
             data.write ({'stage_name':stage_name.name})         
 
+
     def sale_action_opportunities_new(self):
         ####################################################
         self.base_opportunity = True
         countt=1
+        
         for data in self.pdt_line:        
             if (not data.isSplitted):
                 
@@ -206,14 +208,14 @@ class LeadProduct(models.Model):
                 'stage_id':st_id,
                 'type':'opportunity',
                 'priority':self.priority,
-                
+                'vehicle_type_id':self.vehicle_type_id.id,
+                'vehicle_model_id':self.vehicle_model_id.id,
+                'vehicle_brand_id':self.vehicle_brand_id.id,
                 #####################################################
                 #############Змінити час№№№№№№№
                 'date_deadline':date.today().strftime('%Y-%m-%d'),
                 }
                 new_opportunity = self.env['crm.lead'].create(vals)
-                new_opportunity.write({'stage_id':st_id})    
-                
                 new_opportunity.tag_ids=[(6,0,self.tag_ids.ids)]
                 # Creating product line in opportunity##########
                 pdt_line = self.env['crm.product_line']
@@ -226,12 +228,14 @@ class LeadProduct(models.Model):
                             'price_unit':data.price_unit,
                             'market_price':data.market_price,
                             'qty_hand':data.qty_hand,
+                            'product_brand':data.product_brand,
+                            'product_categ':data.product_categ,
                             'isSplitted': True,
                             }
                 pdt_line.create(pdt_value)
-                data1 = self.env['ir.model'].search([('model', '=', 'crm.lead')])
-                
+                  
                 #Creating activity###############
+                data1 = self.env['ir.model'].search([('model', '=', 'crm.lead')])
                 act_vals={
                     'activity_type_id':activity_ids_list[st_id-1],
                     'date_deadline':date.today().strftime('%Y-%m-%d'),
@@ -279,7 +283,7 @@ class LeadProductLine(models.Model):
                                 #  domain= lambda self: self._get_product_domain())
     name = fields.Text(string='Опис')
     pdt_crm = fields.Many2one('crm.lead', string='Діалог')
-    product_uom_qty = fields.Float(string='Quantity', default=1.0)
+    product_uom_qty = fields.Float(string='Кількість', default=1.0)
     price_unit = fields.Float(string='Ціна')
     market_price = fields.Float(string='Ціна продажу')
     qty_hand = fields.Integer(string='Наявна кількість')
@@ -290,11 +294,11 @@ class LeadProductLine(models.Model):
         string='Splitted',
     )
     #######16.01.2018###########
-    categ_id = fields.Many2one(
-        string='Категорія товару',
-        comodel_name='product.public.category',
-        ondelete='set null',
-    )
+    # categ_id = fields.Many2one(
+    #     string='Категорія товару',
+    #     comodel_name='product.public.category',
+    #     ondelete='set null',
+    # )
     ######29.01.2018###########
     default_code = fields.Text(string='Код товару')
 
@@ -303,6 +307,10 @@ class LeadProductLine(models.Model):
         help='Бренд товару'
     )
     
+    product_categ=fields.Char(
+        string='Категорія',
+        help='Категорія товару'
+    )
     # @api.model
     @api.onchange('product_id')
     def _get_product_domain(self):
@@ -334,5 +342,12 @@ class LeadProductLine(models.Model):
         # self.categ_id= data.public_categ_ids
         self.default_code=data.default_code
         self.product_brand=data.product_brand_id.name
+        if (self.pdt_crm.third_level_category.id):
+            self.product_categ=self.pdt_crm.third_level_category.name
+        elif (self.pdt_crm.second_level_category.id):
+            self.product_categ=self.pdt_crm.second_level_category.name
+        elif (self.pdt_crm.first_level_category.id):
+            self.product_categ=self.pdt_crm.first_level_category.name
+        
     
         
