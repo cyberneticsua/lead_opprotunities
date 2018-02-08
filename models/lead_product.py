@@ -10,6 +10,7 @@
 from odoo import models, fields, api
 from datetime import date
 from odoo.exceptions import Warning
+from odoo.tools.safe_eval import safe_eval
 
 activity_ids_list=[8, 9,10,11]
 sales_order_states = [
@@ -129,33 +130,75 @@ class LeadProduct(models.Model):
     # @api.multi
     @api.model
     def get_opportunity_view(self, view_title):
-        partner_ids = self.partner_id.id
+        action = self.env.ref('crm.crm_lead_opportunities_tree_view').read()[0]
+        user_team_id = self.env.user.sale_team_id.id
+        if not user_team_id:
+            user_team_id = self.search([], limit=1).id
+            action['help'] = """<p class='oe_view_nocontent_create'>Click here to add new opportunities</p><p>
+    Looks like you are not a member of a sales team. You should add yourself
+    as a member of one of the sales team.
+</p>"""
+            if user_team_id:
+                action['help'] += "<p>As you don't belong to any sales team, Odoo opens the first one by default.</p>"
+
+        action_context = safe_eval(action['context'], {'uid': self.env.uid})
+        if user_team_id:
+            action_context['default_team_id'] = user_team_id
+        
         child_ids = []
         for data in self.pdt_line:
             if data.child_opportunity:
                 child_ids.append(data.child_opportunity)
-        
-        opportunities = self.env['crm.lead'].search([
-            # ('partner_id', 'in', partner_ids),
-            ('id', 'in', child_ids),
-        ])
-        res = {
-            'name': view_title,
-            'type': 'ir.actions.act_window',
-            'res_model': 'crm.lead',
-            'view_type': 'form',
-        }
-        if len(opportunities) == 1:
-            res['res_id'] = opportunities[0].id
-            res['view_mode'] = 'form'
-        else:
-            res['domain'] = [
-                # ('state', 'in', order_states),
-                # ('partner_id', 'in', partner_ids),
+        action['domain'] = [
+        #         # ('state', 'in', order_states),
+        #         # ('partner_id', 'in', partner_ids),
                 ('id', 'in', child_ids),
             ]
-            res['view_mode'] = 'kanban,tree,form'
-        return res
+        action['name']=view_title
+        tree_view_id = self.env.ref('crm.crm_case_tree_view_oppor').id
+        form_view_id = self.env.ref('crm.crm_case_form_view_oppor').id
+        kanb_view_id = self.env.ref('crm.crm_case_kanban_view_leads').id
+        action['views'] = [
+                [kanb_view_id, 'kanban'],
+                [tree_view_id, 'tree'],
+                [form_view_id, 'form'],
+                [False, 'graph'],
+                [False, 'calendar'],
+                [False, 'pivot']
+            ]
+        action['context'] = action_context
+        return action
+    
+    
+    ###########################################################################################
+        # partner_ids = self.partner_id.id
+        # child_ids = []
+        # for data in self.pdt_line:
+        #     if data.child_opportunity:
+        #         child_ids.append(data.child_opportunity)
+        
+        # opportunities = self.env['crm.lead'].search([
+        #     # ('partner_id', 'in', partner_ids),
+        #     ('id', 'in', child_ids),
+        # ])
+        # res = {
+        #     'name': view_title,
+        #     'type': 'ir.actions.act_window',
+        #     'res_model': 'crm.lead',
+        #     'view_type': 'form',
+        # }
+        # if len(opportunities) == 1:
+        #     res['res_id'] = opportunities[0].id
+        #     res['view_mode'] = 'form'
+        # else:
+        #     res['domain'] = [
+        #         # ('state', 'in', order_states),
+        #         # ('partner_id', 'in', partner_ids),
+        #         ('id', 'in', child_ids),
+        #     ]
+        #     res['view_mode'] = 'kanban,tree,form'
+        # return res
+    ####################################################################
 
     @api.multi
     def button_opportunities(self):
