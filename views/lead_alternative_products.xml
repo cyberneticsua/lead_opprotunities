@@ -7,19 +7,20 @@
             <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
                 <xpath expr="//notebook" position="after">
-                    <notebook>
-                    <page name="Alternative Products" string="Альтернативні товари">
-                        <!-- <field name="pdt_line">
-                            <tree editable="bottom">
+                    <notebook attrs="{'invisible': [('stage_id', '=', 1)]}" name="alt_prods">
+                    <page name="Alternative Products" string="Альтернативні товари" >
+                        <field name="alt_pdt_line" widget="one2many_checkbox">
+                            <tree editable="top" create="false" edit="true">
+                                <field name="sequence" widget="handle"/>
                                 <field name="product_id"/>
                                 <field name="default_code"/>
                                 <field name="product_uom_qty"/>
                                 <field name="price_unit" />
                                 <field name="product_brand"/>
-                                <field name="product_categ"/>
+                                <!-- <field name="product_categ"/> -->
                                 <field name="qty_hand"/>
                             </tree>
-                        </field> -->
+                        </field>
                     </page>
                     </notebook>
                 </xpath>

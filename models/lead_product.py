@@ -233,7 +233,11 @@ class LeadProduct(models.Model):
                             'isSplitted': True,
                             }
                 pdt_line.create(pdt_value)
-                  
+
+                if (st_id==2):
+                    data_ww = self.env['product.product'].search([('id', '=', data.product_id.id)])
+                    self.find_alternative_products({'prod_id':data_ww.product_tmpl_id.id,'new_oppor_id':new_opportunity.id})
+
                 #Creating activity###############
                 data1 = self.env['ir.model'].search([('model', '=', 'crm.lead')])
                 act_vals={
@@ -246,6 +250,7 @@ class LeadProduct(models.Model):
 
                 #Setting stage stage#################
                 stage_name = self.env['crm.stage'].search([('id', '=', new_opportunity.stage_id.id)])
+                # raise Warning (int(new_opportunity.id))
                 data.write ({'stage_name':stage_name.name,'product_stage_id':new_opportunity.stage_id,'child_opportunity':int(new_opportunity.id)})
         self.pdt_line.write({'isSplitted':True})
         
@@ -340,7 +345,7 @@ class LeadProductLine(models.Model):
         self.qty_hand = data.qty_available
         self.isSplitted = False
         # self.categ_id= data.public_categ_ids
-        self.default_code=data.default_code
+        self.default_code=self.product_id.default_code
         self.product_brand=data.product_brand_id.name
         if (self.pdt_crm.third_level_category.id):
             self.product_categ=self.pdt_crm.third_level_category.name
