@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="mail_activity_list" model="ir.actions.act_window">
+        <field name="name">Активності</field>
+        <field name="res_model">mail.activity</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+      id="menu_mail_activity_list"
+      action="mail_activity_list"
+      parent="sale.prod_config_main"
+    />
+
+     <record id="view_mail_activity_list_tree" model="ir.ui.view">
+        <field name="name">mail.activity.list.tree</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">
+            <tree string="mail.activity.list">
+                <field name="res_name"/>
+                <field name="summary"/>
+                <field name="date_deadline"/>
+                <button class="oe_inline oe_stat_button"
+                            string="Перейти"
+                            name="return_values"
+                            type="object"
+                />
+            </tree>
+        </field>
+    </record>
+</odoo>

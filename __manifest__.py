@@ -34,6 +34,7 @@
              'views/opportunity_pdt_views.xml',
              'views/vendor_extension.xml',
              'views/lead_alternative_products.xml',
+             'views/activities_list.xml'
              ],
     'images': ['static/description/banner.jpg'],
     'license': 'LGPL-3',

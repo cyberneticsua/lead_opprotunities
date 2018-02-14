@@ -242,8 +242,10 @@ class LeadProduct(models.Model):
                 # Creating opportunity###############
                 if data.default_code:
                     st_id = 2
+                    my_activity = self.env['mail.activity.type'].search([('name', '=', 'Запланувати пошук, парсити')])
                 else:
                     st_id = 1
+                    my_activity = self.env['mail.activity.type'].search([('name', '=', 'Ідентифікувати')])
                 vals = {
                 'partner_id': self.partner_id.id,
                 'user_id': self.env.uid,
@@ -281,10 +283,11 @@ class LeadProduct(models.Model):
                     data_ww = self.env['product.product'].search([('id', '=', data.product_id.id)])
                     self.find_alternative_products({'prod_id':data_ww.product_tmpl_id.id,'new_oppor_id':new_opportunity.id})
 
-                #Creating activity###############
+                ###############Creating activity###############
                 data1 = self.env['ir.model'].search([('model', '=', 'crm.lead')])
+                
                 act_vals={
-                    'activity_type_id':activity_ids_list[st_id-1],
+                    'activity_type_id': my_activity.id,
                     'date_deadline':date.today().strftime('%Y-%m-%d'),
                     'res_id':new_opportunity.id,
                     'res_model_id':data1.id,
@@ -299,8 +302,9 @@ class LeadProduct(models.Model):
         
         if self.description:
             data1 = self.env['ir.model'].search([('model', '=', 'crm.lead')])
+            my_activity = self.env['mail.activity.type'].search([('name', '=', 'Уточнити параметри авто')])
             act_vals={
-                    'activity_type_id':activity_ids_list[3],
+                    'activity_type_id':my_activity.id,
                     'date_deadline':date.today().strftime('%Y-%m-%d'),
                     'res_id':self.id,
                     'res_model_id':data1.id,
