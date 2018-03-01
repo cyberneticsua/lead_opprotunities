@@ -158,6 +158,9 @@
                 </xpath>
             </field>
         </record>
+        
+        <!-- Розширення product view -->
+
 
     </data>
 </odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="category_list" model="ir.actions.act_window">
+        <field name="name">Категорії</field>
+        <field name="res_model">product.category</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+      id="menu_category_list"
+      action="category_list"
+      parent="sale.prod_config_main"
+    />
+
+     <record id="view_category_list_tree" model="ir.ui.view">
+        <field name="name">category.list.tree</field>
+        <field name="model">product.category</field>
+        <field name="field_parent">child_ids</field>
+        <field name="type">tree</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Категорії">
+                <field name="name"/>
+                <field name="parent_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+
+
+    
+</odoo>

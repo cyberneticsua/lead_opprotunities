@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <record id="product_pricelist_list" model="ir.actions.act_window">
+        <field name="name">Прайс-листи</field>
+        <field name="res_model">product.product</field>
+        <field name="view_type">tree</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+      id="menu_product_pricelist_list"
+      action="product_pricelist_list"
+      parent="sale.prod_config_main"
+    />
+
+        <record id="product_pricelist_item_tree_view" model="ir.ui.view">
+            <field name="name">product.product.pricelist.tree</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <tree string="Pricelist Items">
+                    <field colspan="4" name="name"/>
+                    <field name="product_id" groups="product.group_product_variant"/>
+                    <field name="product_tmpl_id"/>
+                    <field name="categ_id"/>
+                    <field name="min_quantity"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>
